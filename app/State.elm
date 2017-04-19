@@ -1,7 +1,6 @@
 module State
     exposing
         ( init
-        , getPosition
         , update
         , updateHelp
         , subscriptions
@@ -9,36 +8,41 @@ module State
 
 import Types
     exposing
-        ( Model
+        ( Angle
         , Drag
+        , Model
         , Msg
             ( DragStart
             , DragAt
             , DragEnd
             )
+        , Slider
         )
 import Mouse exposing (Position)
 
 
+emptySlider =
+    { center = Position 300 300
+    , angleA = turns 0.001
+    , angleB = turns 0
+    , maxθ = turns 1
+    , minθ = turns 0
+    , damping = 0.01
+    , inertia = 0.5
+    }
+
+
 init : ( Model, Cmd Msg )
 init =
-    ( Model (Position 200 200) Nothing, Cmd.none )
+    ( Model
+        Nothing
+        emptySlider
+    , Cmd.none
+    )
 
 
 
 -- UPDATE
-
-
-getPosition : Model -> Position
-getPosition { position, drag } =
-    case drag of
-        Nothing ->
-            position
-
-        Just { start, current } ->
-            Position
-                (position.x + current.x - start.x)
-                (position.y + current.y - start.y)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -47,16 +51,33 @@ update msg model =
 
 
 updateHelp : Msg -> Model -> Model
-updateHelp msg ({ position, drag } as model) =
+updateHelp msg ({ drag, slider } as model) =
     case msg of
         DragStart xy ->
-            Model position (Just (Drag xy xy))
+            Model
+                (Just <| getAngle slider.center xy <| getAngle slider.center xy)
+                slider
 
         DragAt xy ->
-            Model position (Maybe.map (\{ start } -> Drag start xy) drag)
+            Model
+                (Maybe.map (\{ current } -> Drag current (getAngle slider.center xy)) drag)
+                slider
 
         DragEnd _ ->
-            Model (getPosition model) Nothing
+            Model
+                Nothing
+                slider
+
+
+getAngle : Position -> Position -> Angle
+getAngle a b =
+    let
+        ( r, θ ) =
+            toPolar
+                ( toFloat a.x, toFloat a.y )
+                ( toFloat b.x, toFloat b.y )
+    in
+        θ
 
 
 

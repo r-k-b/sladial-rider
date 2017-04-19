@@ -1,12 +1,14 @@
 module Types
     exposing
-        ( Model
+        ( Angle
         , Drag
+        , Model
         , Msg
             ( DragStart
             , DragAt
             , DragEnd
             )
+        , Slider
         )
 
 import Mouse exposing (Position)
@@ -19,12 +21,33 @@ type Msg
 
 
 type alias Model =
-    { position : Position
-    , drag : Maybe Drag
+    { drag : Maybe Drag
+    , slider : Slider
+    }
+
+
+type alias Slider =
+    { center : Position
+    , angleA : Angle
+    , angleB : Angle
+    , maxθ : Angle
+    , minθ : Angle
+    , damping : Float
+    , inertia : Float
     }
 
 
 type alias Drag =
-    { start : Position
-    , current : Position
+    { prior : Angle
+    , current : Angle
     }
+
+
+type alias Vector2 =
+    { x : Float
+    , y : Float
+    }
+
+
+type alias Angle =
+    Float
