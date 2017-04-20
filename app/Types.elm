@@ -9,9 +9,14 @@ module Types
             , DragEnd
             )
         , Slider
+        , Vector
         )
 
-import Mouse exposing (Vector)
+import Mouse exposing (Position)
+
+
+type alias Vector =
+    { x : Int, y : Int }
 
 
 type Msg

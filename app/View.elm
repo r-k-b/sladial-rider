@@ -6,13 +6,13 @@ import Types
         , Model
         , Msg(DragStart)
         , Slider
+        , Vector
         )
-import Mouse exposing (Vector)
 import Html exposing (Html, div, text, Attribute, pre, code)
 import Html.Attributes exposing (style)
 import Html.Events exposing (on)
 import Json.Decode as Decode
-import Mouse exposing (Vector)
+import Mouse exposing (Position)
 
 
 (=>) =

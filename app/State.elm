@@ -9,6 +9,7 @@ module State
 import Types
     exposing
         ( Angle
+        , Vector
         , Drag
         , Model
         , Msg
@@ -18,7 +19,7 @@ import Types
             )
         , Slider
         )
-import Mouse exposing (Vector)
+import Mouse exposing (Position)
 
 
 emptySlider =
