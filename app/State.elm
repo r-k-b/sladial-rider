@@ -73,7 +73,7 @@ updateHelp msg ({ drag, slider } as model) =
                     Just drag ->
                         Model
                             (Just { prior = drag.current, current = getAng xy })
-                            (rotateSlider slider <| getAng xy - drag.current)
+                            (rotateSlider slider <| normalisedAngle (getAng xy) drag.current)
 
             DragEnd _ ->
                 Model
@@ -111,6 +111,21 @@ vectorSubtract a b =
     { x = a.x - b.x
     , y = a.y - b.y
     }
+
+
+
+-- Get the normalised difference between two angles.
+-- Will be between -0.25 turns and +0.25 turns.
+-- [https://en.wikipedia.org/wiki/Atan2]
+
+
+normalisedAngle : Angle -> Angle -> Angle
+normalisedAngle a b =
+    let
+        diff =
+            a - b
+    in
+        atan2 (sin diff) (cos diff)
 
 
 
