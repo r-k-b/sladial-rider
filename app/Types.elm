@@ -29,8 +29,8 @@ type alias Model =
 type alias Slider =
     { origin : Vector
     , originToCenter : Vector
-    , angleA : Angle
-    , angleB : Angle
+    , actualAngle : Angle
+    , targetAngle : Angle
     , maxθ : Angle
     , minθ : Angle
     , damping : Float

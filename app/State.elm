@@ -24,8 +24,8 @@ import Mouse exposing (Vector)
 emptySlider =
     { origin = Vector 300 300
     , originToCenter = Vector 50 50
-    , angleA = turns 0.001
-    , angleB = turns 0
+    , actualAngle = turns 0
+    , targetAngle = turns 0
     , maxθ = turns 1
     , minθ = turns 0
     , damping = 0.01
@@ -78,7 +78,7 @@ updateHelp msg ({ drag, slider } as model) =
             DragEnd _ ->
                 Model
                     Nothing
-                    slider
+                    (snapBack slider)
 
 
 getAngle : Vector -> Vector -> Angle
@@ -96,7 +96,24 @@ getAngle a b =
 
 rotateSlider : Slider -> Angle -> Slider
 rotateSlider s ang =
-    { s | angleA = s.angleA + ang }
+    let
+        newTarget =
+            s.targetAngle + ang
+
+        newActual =
+            clamp s.minθ s.maxθ newTarget
+    in
+        { s
+            | actualAngle = newActual
+            , targetAngle = newTarget
+        }
+
+
+{-| Reset the target angle (if it's out of range) once the user releases it.
+-}
+snapBack : Slider -> Slider
+snapBack s =
+    { s | targetAngle = s.actualAngle }
 
 
 vectorAdd : Vector -> Vector -> Vector
@@ -113,12 +130,10 @@ vectorSubtract a b =
     }
 
 
-
--- Get the normalised difference between two angles.
--- Will be between -0.25 turns and +0.25 turns.
--- [https://en.wikipedia.org/wiki/Atan2]
-
-
+{-| Get the normalised difference between two angles.
+Will be between -0.25 turns and +0.25 turns.
+[(atan2 @ wikipedia)][https://en.wikipedia.org/wiki/Atan2]
+-}
 normalisedAngle : Angle -> Angle -> Angle
 normalisedAngle a b =
     let
