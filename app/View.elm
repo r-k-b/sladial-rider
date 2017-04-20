@@ -6,12 +6,12 @@ import Types
         , Msg(DragStart)
         , Slider
         )
-import Mouse exposing (Position)
+import Mouse exposing (Vector)
 import Html exposing (Html, div, text, Attribute, pre, code)
 import Html.Attributes exposing (style)
 import Html.Events exposing (on)
 import Json.Decode as Decode
-import Mouse exposing (Position)
+import Mouse exposing (Vector)
 
 
 (=>) =
@@ -29,8 +29,8 @@ slider s =
             , "height" => "100px"
             , "border-radius" => "4px"
             , "position" => "absolute"
-            , "left" => px s.center.x
-            , "top" => px s.center.y
+            , "left" => px s.origin.x
+            , "top" => px s.origin.y
             , "transform" => rotate s.angleA
             , "color" => "white"
             , "display" => "flex"
@@ -55,7 +55,7 @@ sliderDebug s =
         ]
 
 
-draggable : Position -> Html Msg
+draggable : Vector -> Html Msg
 draggable p =
     div
         [ onMouseDown
@@ -94,8 +94,8 @@ px number =
 
 
 rotate : Float -> String
-rotate turns =
-    "rotate(" ++ toString turns ++ "turn)"
+rotate angle =
+    "rotate(" ++ toString angle ++ "rad)"
 
 
 onMouseDown : Attribute Msg

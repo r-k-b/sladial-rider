@@ -18,11 +18,12 @@ import Types
             )
         , Slider
         )
-import Mouse exposing (Position)
+import Mouse exposing (Vector)
 
 
 emptySlider =
-    { center = Position 300 300
+    { origin = Vector 300 300
+    , originToCenter = Vector 50 50
     , angleA = turns 0.001
     , angleB = turns 0
     , maxθ = turns 1
@@ -52,32 +53,57 @@ update msg model =
 
 updateHelp : Msg -> Model -> Model
 updateHelp msg ({ drag, slider } as model) =
-    case msg of
-        DragStart xy ->
-            Model
-                (Just <| getAngle slider.center xy <| getAngle slider.center xy)
-                slider
+    let
+        getAng =
+            getAngle <| vectorAdd slider.origin slider.originToCenter
+    in
+        case msg of
+            DragStart xy ->
+                Model
+                    (Just { prior = getAng xy, current = getAng xy })
+                    slider
 
-        DragAt xy ->
-            Model
-                (Maybe.map (\{ current } -> Drag current (getAngle slider.center xy)) drag)
-                slider
+            DragAt xy ->
+                Model
+                    (Maybe.map (\{ current } -> Drag current <| getAng xy) drag)
+                    (rotateSlider slider <| getAng xy)
 
-        DragEnd _ ->
-            Model
-                Nothing
-                slider
+            DragEnd _ ->
+                Model
+                    Nothing
+                    slider
 
 
-getAngle : Position -> Position -> Angle
+getAngle : Vector -> Vector -> Angle
 getAngle a b =
     let
+        vec =
+            vectorSubtract a b
+
         ( r, θ ) =
             toPolar
-                ( toFloat a.x, toFloat a.y )
-                ( toFloat b.x, toFloat b.y )
+                ( toFloat vec.x, toFloat vec.y )
     in
         θ
+
+
+rotateSlider : Slider -> Angle -> Slider
+rotateSlider s ang =
+    { s | angleA = ang }
+
+
+vectorAdd : Vector -> Vector -> Vector
+vectorAdd a b =
+    { x = a.x + b.x
+    , y = a.y + b.y
+    }
+
+
+vectorSubtract : Vector -> Vector -> Vector
+vectorSubtract a b =
+    { x = a.x - b.x
+    , y = a.y - b.y
+    }
 
 
 

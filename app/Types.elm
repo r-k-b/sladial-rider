@@ -11,13 +11,13 @@ module Types
         , Slider
         )
 
-import Mouse exposing (Position)
+import Mouse exposing (Vector)
 
 
 type Msg
-    = DragStart Position
-    | DragAt Position
-    | DragEnd Position
+    = DragStart Vector
+    | DragAt Vector
+    | DragEnd Vector
 
 
 type alias Model =
@@ -27,7 +27,8 @@ type alias Model =
 
 
 type alias Slider =
-    { center : Position
+    { origin : Vector
+    , originToCenter : Vector
     , angleA : Angle
     , angleB : Angle
     , maxθ : Angle
