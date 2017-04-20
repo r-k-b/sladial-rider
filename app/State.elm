@@ -24,8 +24,8 @@ import Mouse exposing (Vector)
 emptySlider =
     { origin = Vector 300 300
     , originToCenter = Vector 50 50
-    , actualAngle = turns 0
-    , targetAngle = turns 0
+    , actualAngle = turns 0.05
+    , targetAngle = turns 0.05
     , maxθ = turns 1
     , minθ = turns 0
     , damping = 0.01

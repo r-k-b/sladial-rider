@@ -2,7 +2,8 @@ module View exposing (view)
 
 import Types
     exposing
-        ( Model
+        ( Angle
+        , Model
         , Msg(DragStart)
         , Slider
         )
@@ -41,6 +42,47 @@ slider s =
         ]
         [ text "Spin Me!"
         ]
+
+
+linearSlider : Slider -> Html Msg
+linearSlider s =
+    let
+        targetLO =
+            angleToLinearOffset s.targetAngle
+
+        actualLO =
+            angleToLinearOffset s.actualAngle
+    in
+        div
+            [ style
+                [ "width" => "100%"
+                , "height" => "4em"
+                , "position" => "relative"
+                , "user-select" => "none"
+                ]
+            ]
+            [ pre []
+                [ code []
+                    [ text <| "Target: " ++ targetLO ++ "\nActual: " ++ actualLO
+                    ]
+                ]
+            , div
+                [ style
+                    [ "position" => "absolute"
+                    , "left" => targetLO
+                    , "top" => "1em"
+                    ]
+                ]
+                [ text "↓ Target" ]
+            , div
+                [ style
+                    [ "position" => "absolute"
+                    , "left" => actualLO
+                    , "top" => "2em"
+                    ]
+                ]
+                [ text "↑ Actual" ]
+            ]
 
 
 sliderDebug : Slider -> Html Msg
@@ -85,6 +127,7 @@ view model =
         -- [ draggable realPosition
         [ slider model.slider
         , sliderDebug model.slider
+        , linearSlider model.slider
         ]
 
 
@@ -101,3 +144,26 @@ rotate angle =
 onMouseDown : Attribute Msg
 onMouseDown =
     on "mousedown" (Decode.map DragStart Mouse.position)
+
+
+angleToLinearOffset : Angle -> String
+angleToLinearOffset a =
+    let
+        scale =
+            50
+
+        softening =
+            32
+
+        offset =
+            50
+
+        x =
+            tanh (a / softening) * scale + offset
+    in
+        toString x ++ "%"
+
+
+tanh : Float -> Float
+tanh x =
+    (e ^ x - e ^ (-x)) / (e ^ x + e ^ (-x))
