@@ -131,7 +131,7 @@ vectorSubtract a b =
 
 
 {-| Get the normalised difference between two angles.
-Will be between -0.25 turns and +0.25 turns.
+Will be between -0.5 turns and +0.5 turns.
 [(atan2 @ wikipedia)][https://en.wikipedia.org/wiki/Atan2]
 -}
 normalisedAngle : Angle -> Angle -> Angle
