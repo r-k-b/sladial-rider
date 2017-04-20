@@ -64,9 +64,16 @@ updateHelp msg ({ drag, slider } as model) =
                     slider
 
             DragAt xy ->
-                Model
-                    (Maybe.map (\{ current } -> Drag current <| getAng xy) drag)
-                    (rotateSlider slider <| getAng xy)
+                case drag of
+                    Nothing ->
+                        Model
+                            Nothing
+                            slider
+
+                    Just drag ->
+                        Model
+                            (Just { prior = drag.current, current = getAng xy })
+                            (rotateSlider slider <| getAng xy - drag.current)
 
             DragEnd _ ->
                 Model
@@ -89,7 +96,7 @@ getAngle a b =
 
 rotateSlider : Slider -> Angle -> Slider
 rotateSlider s ang =
-    { s | angleA = ang }
+    { s | angleA = s.angleA + ang }
 
 
 vectorAdd : Vector -> Vector -> Vector
